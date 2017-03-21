@@ -1,9 +1,8 @@
 /*!
- * pageFall.v1.1
+ * pageFall.v1.2
  * 解决 新站首页瀑布流定制
- * 无官网，无文档，无生产许可证。
  *
- * Copyright 2017 leon0204   forkme @ 【leon0204@github.com】
+ * Copyright 2017 leon0204   forkme @ 【https://github.com/leon0204/pageFall】
  *
 
  * 使用方法：1 添加 #loadsoft 的dom节点用于设置初始页码
@@ -18,36 +17,75 @@
 
 var softPage = $("#loadsoft").attr("data-page");
 var eduPage = $("#loadedu").attr("data-page");
+var limit   = 10;
 $(window).scroll(function () {
     if ($(document).scrollTop() + $(window).height() >= $(document).height()) {
         var softClassCondition = $("#softnav").attr('class');
         var eduClassCondition = $("#edunav").attr('class');
         if (softClassCondition == 'on'  ){
+            var kind = 'soft';
             softPage++;
-            var ajaxurl = 'ajax?page='+softPage+'&type=soft';
-            $.get(ajaxurl, function (data) {
-                addSoft(data,softPage);
-            }, 'json');
-        }else if (eduClassCondition =='on') {
-            if(eduPage<17){
-                eduPage++;
-                var ajaxurl = 'ajax?page='+eduPage+'&type=edu';
-                $.get(ajaxurl, function (data) {
-                    addEdu(data,eduPage);
-                }, 'json');
+            if(softPage<limit+1){
+                var ajaxurl = 'ajax?page='+softPage+'&type=soft';
+                ajaxGo(softPage,ajaxurl,kind);
             }
+        }else if (eduClassCondition =='on') {
+                var kind = 'edu';
+                eduPage++;
+            if(eduPage<limit+1){
+                var ajaxurl = 'ajax?page='+eduPage+'&type=edu';
+                ajaxGo(eduPage,ajaxurl,kind);
+            }
+
+
         }else{
             return false;
         }
     }
 });
 
-function addSoft(data,pageCount) {
-    if(pageCount>15){
-        $("#loadsoft").text('进入列表页查看更多');
-        $('#loadsoft').attr('href','/soft/soft-2-1.html');
-        return;
+function ajaxGo(page,ajaxurl,kind) {
+    $.ajax({
+        type:"get",
+        cache:false,
+        url:ajaxurl,
+        dataType:"json",
+        beforeSend:function(){
+            $("#load"+kind+"img").attr('src','v2017/icon/loading3.gif');
+            $("#load"+kind).text('加载中');
+        },
+        success:function(data){
+            $("#load"+kind+"img").attr('src','v2017/icon/font-8193.png');
+            $("#load"+kind).text('滑动查看更多');
+            if (kind == 'soft'){
+                addSoft(data,page,kind);
+            }else{
+                addEdu(data,page,kind);
+            }
+        }
+    })
+}
+
+
+
+/*!
+ *  endScroll 自定义结束scroll逻辑
+ */
+
+function endScroll(pageCount,kind) {
+    if(pageCount>limit-1){
+        if (kind =='soft'){
+            $("#loadsoft").text('进入列表页查看更多');
+            $('#loadsoft').attr('href','/soft/soft-2-1.html');
+        }else{
+            $("#loadedu").text('进入教程列表页查看更多');
+            $('#loadedu').attr('href','/edu/soft-15-1.html');
+        }
     }
+}
+
+function addSoft(data,pageCount,kind) {
+    endScroll(pageCount,kind)
     var str = '';
     var length =data.length;
     if (length == 0 ||length<10){
@@ -65,12 +103,8 @@ function addSoft(data,pageCount) {
     }
 }
 
-function addEdu(data,pageCount) {
-    if(pageCount>15){
-        $("#loadedu").text('进入教程列表页查看更多');
-        $('#loadedu').attr('href','/edu/soft-15-1.html');
-        return;
-    }
+function addEdu(data,pageCount,kind) {
+    endScroll(pageCount,kind)
     var str = '';
     var length =data.length;
     if (length == 0 ||length<10){
@@ -87,6 +121,7 @@ function addEdu(data,pageCount) {
         $(".addedu").append(str);
 
     }
+
 
 }
 
