@@ -1,0 +1,52 @@
+  <ul class="lh" id="list-softs" >
+                            @foreach ($recent['soft'] as $rs)
+                            <li>
+                                <div class="list-box cl">
+                                    <div class="list-img">
+                                        <a href="{{$rs['infourl']}}" target="_blank">
+                                            <img src="{{$rs['titlepic']}}" alt="{{$rs['title']}}"/>
+                                        </a>
+                                    </div>
+                                    <div class="list-right  cl">
+                                        <div class="list-title">
+                                            <h2>
+                                                <a href="{{$rs['infourl']}}" target="_blank">
+                                                    {{$rs['title']}}
+                                                </a>
+                                            </h2>
+                                        </div>
+                                        <div class="meta cl">
+                                            <em>
+                                                软件大小：{{ GetFileSize($rs['size']) }}
+                                            </em>
+                                            <em>
+                                                        <span>
+                                                            星级：
+                                                        </span>
+                                                <div class="star-bar star-bar-show_2 size-M f-l va-m  pull-left cl">
+                                                            <span class="star" style="width: {{$rs['star'] * 10}}%">
+                                                            </span>
+                                                </div>
+                                            </em>
+                                        </div>
+                                        <div class="list-bdcontent">
+                                            {{MbStr($rs['description'],120)}}
+                                        </div>
+                                        <a href="{{ $rs['infourl'] }}" class="btn" target="_blank">
+                                            <i class="icon-xiazai">
+                                            </i>
+                                            立即下载
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                            @endforeach
+                                <div class="addsoft"></div>
+                                <div class="pages-flow">
+                               {{--  <i  id = "loading" class="icon-weibiaoti4"></i>--}}
+                                    <img id="loadsoftimg" src="{{$resHost}}/icon/font-8193.png"  width="30px" height="30px"  alt="">  <a  id="loadsoft" class="laypage_next" data-page="1"> 滑动查看更多</a>
+                                </div>
+                                <div class="blank20"></div>
+                         <script type="text/javascript" src="{{$resHost}}/js/pageFall.js"></script>
+
+                        </ul>
