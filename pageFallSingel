@@ -1,0 +1,105 @@
+/*!
+ * pageFall.v1.3
+ * 解决 新站/downza首页瀑布流定制
+ *
+ * Copyright 2017 leon0204   获取最新版本代码 Or  fork me @ 【https://github.com/leon0204/pageFall】
+ *
+
+ * 使用方法：1 添加 #loadsoft 的dom节点用于设置初始页码
+ *          2  scroll 实现滑动翻页
+ *          3 softnavClass  实现两栏即以上的当前滑动页面判断
+ *          4 ajax + php 实现翻页数据获取
+ *          5 设置页数15页
+
+ *          v1.2 添加翻页加载动画 。优化加载速度。
+ *          v1.3 单模板多应用
+
+ */
+
+
+var publicPage = $("#load").attr("data-page");
+var limit   = 20;
+
+$(window).scroll(function () {
+    if ($(document).scrollTop() + $(window).height() >= $(document).height()) {
+            var newsClassCondition = $("#news").attr('class');
+            var eduClassCondition = $("#edu").attr('class');
+            if (newsClassCondition == 'on'){
+                kind = 'news';
+            }else{
+                kind = 'edu';
+            }
+                publicPage++;
+                if(publicPage<limit+1){
+                    var ajaxurl = '/articleAjax?page='+publicPage+'&type='+kind;
+                    ajaxGo(publicPage,ajaxurl,kind);
+                }
+    }
+});
+
+function ajaxGo(page,ajaxurl,kind) {
+    $.ajax({
+        type:"get",
+        cache:false,
+        url:ajaxurl,
+        dataType:"json",
+        beforeSend:function(){
+            $("#loadimg").attr('src','/v2017/images/loading3.gif');
+            $("#load").text('加载中');
+        },
+        success:function(data){
+            $("#loadimg").attr('src','/v2017/images/font-8193.png');
+            $("#load").text('滑动查看更多');
+                add(data,page,kind);
+        }
+    })
+}
+
+
+
+/*!
+ *  endScroll 自定义结束scroll逻辑
+ */
+
+function endScroll(pageCount,kind) {
+
+    if(pageCount>limit-1){
+        if (kind =='news'){
+            $("#load").text('进入资讯列表页查看更多');
+            $('#load').attr('href','/news/news-7-1.html');
+        }else{
+            $("#load").text('进入教程列表页查看更多');
+            $('#load').attr('href','/edu/edu-15-1.html');
+        }
+    }
+}
+
+function add(data,pageCount,kind){
+    endScroll(pageCount,kind)
+    var str = '';
+    var length =data.length;
+    if (length == 0 ||length<10){
+        if (kind =='news'){
+            $("#load").text('进入资讯列表页查看更多');
+            $('#load').attr('href','/news/news-7-1.html');
+        }else{
+            $("#load").text('进入教程列表页查看更多');
+            $('#load').attr('href','/edu/edu-15-1.html');
+            return;
+        }
+
+    }
+    for(var i=0,length;i<length;i++){
+        //在这里进行str的拼接
+        str = '<li>'
+        +'<div class="news-img pull-left"><a href=" '+  data[i]['infourl']+'"><img src=" '+  data[i]['titlepic']+'" style="width: 121px;height: 91px" alt="'+  data[i]['title']+'"> </a></div>    '
+        +'<div class="news-head"><h2><a href=" '+  data[i]['classurl']+'" class="btn">'+  data[i]['listTag']+'</a>    <a href=" '+  data[i]['infourl']+' ">  '+  data[i]['title']+'  </a> </h2></div>    '
+        +'<p class="meta"><time> '+  data[i]['lastdotime']+'</time>   <span class="author">  '+  data[i]['username']+' </span><span class="pv">阅读( '+  data[i]['allHits']+' )</span> </p><p class="note">'+  data[i]['smalltext']+'  </p><div class="cl"></div> </li>         '
+        ;
+        $(".add").append(str);
+
+    }
+
+
+}
+
