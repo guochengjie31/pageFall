@@ -1,3 +1,5 @@
+-  源代码：https://github.com/leon0204/pageFall
+
 # pageFall
 php+jq实现 滚动翻页瀑布流
 
@@ -18,3 +20,8 @@ php+jq实现 滚动翻页瀑布流
  *          v1.3 单模板多应用
 
  */
+ 
+ 
+ ![这里写图片描述](http://img3.douban.com/mpic/s1108264.jpg)
+![这里写图片描述][jane-eyre-douban]
+[jane-eyre-douban]: http://img3.douban.com/mpic/s1108264.jpg
